@@ -1,0 +1,408 @@
+{
+  "info": {
+    "name": "Quiz App API",
+    "description": "Complete API collection for Quiz Application Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"+919876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "otp"]
+            }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"firebase_id_token_here\",\n  \"name\": \"John Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-otp"]
+            }
+          }
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"google_id_token_here\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/google",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "google"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Questions",
+      "item": [
+        {
+          "name": "Get All Questions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/questions?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["questions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "category",
+                  "value": "Science",
+                  "disabled": true
+                },
+                {
+                  "key": "difficulty",
+                  "value": "easy",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get PYQs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/questions/pyqs?year=2023",
+              "host": ["{{baseUrl}}"],
+              "path": ["questions", "pyqs"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2023"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Daily Questions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/questions/daily?count=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["questions", "daily"],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is 2 + 2?\",\n  \"options\": [\"3\", \"4\", \"5\", \"6\"],\n  \"answer\": \"4\",\n  \"category\": \"Mathematics\",\n  \"difficulty\": \"easy\",\n  \"isPYQ\": false,\n  \"explanation\": \"Basic addition\",\n  \"tags\": [\"math\", \"addition\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/questions",
+              "host": ["{{baseUrl}}"],
+              "path": ["questions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tests",
+      "item": [
+        {
+          "name": "Get All Tests",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tests",
+              "host": ["{{baseUrl}}"],
+              "path": ["tests"]
+            }
+          }
+        },
+        {
+          "name": "Create Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Test\",\n  \"description\": \"A sample test\",\n  \"questions\": [\"question_id_1\", \"question_id_2\"],\n  \"isPublic\": true,\n  \"duration\": 60,\n  \"totalMarks\": 100,\n  \"category\": \"General\",\n  \"difficulty\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tests",
+              "host": ["{{baseUrl}}"],
+              "path": ["tests"]
+            }
+          }
+        },
+        {
+          "name": "Get My Tests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tests/user/my-tests",
+              "host": ["{{baseUrl}}"],
+              "path": ["tests", "user", "my-tests"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get User Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics"]
+            }
+          }
+        },
+        {
+          "name": "Submit Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"testId\": \"test_id_here\",\n  \"answers\": [\n    {\n      \"questionId\": \"question_id_1\",\n      \"selectedAnswer\": \"answer\",\n      \"timeTaken\": 30\n    }\n  ],\n  \"timeTaken\": 1800\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/analytics",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics"]
+            }
+          }
+        },
+        {
+          "name": "Get Category Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/analytics/stats/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["analytics", "stats", "category"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 499,\n  \"currency\": \"INR\",\n  \"plan\": \"monthly\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "create"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscription Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payments/subscription-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "subscription-status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Filters",
+      "item": [
+        {
+          "name": "Get All Filters",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/filters",
+              "host": ["{{baseUrl}}"],
+              "path": ["filters"]
+            }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/filters/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["filters", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/filters/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["filters", "stats"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
