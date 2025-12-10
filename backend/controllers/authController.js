@@ -2,6 +2,7 @@ const User = require('../models/user');
 const { generateAuthToken } = require('../utils/jwt');
 const { verifyFirebaseToken, verifyGoogleToken } = require('../utils/firebase');
 const { generateOTP, storeOTP, verifyOTP: verifyOTPUtil, sendOTPViaSMS } = require('../utils/otp');
+const { generateEmailOTP, storeEmailOTP, verifyEmailOTP, sendOTPViaEmail } = require('../utils/emailOtp');
 
 /**
  * @desc    Send OTP to mobile number
@@ -280,10 +281,125 @@ const updateProfile = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Send OTP to email
+ * @route   POST /api/auth/email-otp
+ * @access  Public
+ */
+const sendEmailOTP = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+    }
+
+    // Generate OTP
+    const otp = generateEmailOTP();
+    
+    // Store OTP
+    storeEmailOTP(email, otp);
+    
+    // Send OTP via Email
+    await sendOTPViaEmail(email, otp, name);
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP sent to your email',
+      email,
+      ...(process.env.NODE_ENV === 'development' && { otp })
+    });
+  } catch (error) {
+    console.error('Send email OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error sending OTP',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * @desc    Verify email OTP and register/login user
+ * @route   POST /api/auth/verify-email-otp
+ * @access  Public
+ */
+const verifyEmailOTPController = async (req, res) => {
+  try {
+    const { email, otp, name } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and OTP are required'
+      });
+    }
+
+    // Verify OTP
+    const otpVerification = verifyEmailOTP(email, otp);
+    
+    if (!otpVerification.success) {
+      return res.status(400).json({
+        success: false,
+        message: otpVerification.message
+      });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      // Create new user
+      user = await User.create({
+        email: email.toLowerCase(),
+        name: name || 'User'
+      });
+    }
+
+    // Generate JWT token
+    const token = generateAuthToken(user);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        subscription: user.subscription,
+        subscriptionExpiry: user.subscriptionExpiry
+      }
+    });
+  } catch (error) {
+    console.error('Verify email OTP error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error verifying OTP',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,
   googleLogin,
   getMe,
-  updateProfile
+  updateProfile,
+  sendEmailOTP,
+  verifyEmailOTPController
 };

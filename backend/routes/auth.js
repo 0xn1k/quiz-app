@@ -5,7 +5,9 @@ const {
   verifyOTP,
   googleLogin,
   getMe,
-  updateProfile
+  updateProfile,
+  sendEmailOTP,
+  verifyEmailOTPController
 } = require('../controllers/authController');
 const {
   register,
@@ -21,6 +23,10 @@ router.post('/login', login);
 router.post('/otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
 router.post('/google', googleLogin);
+
+// Email OTP Routes
+router.post('/email-otp', sendEmailOTP);
+router.post('/verify-email-otp', verifyEmailOTPController);
 
 // Protected routes
 router.get('/me', protect, getMe);
