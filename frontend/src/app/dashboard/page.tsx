@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { analyticsAPI, testAPI } from '@/lib/api';
 import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -45,134 +47,144 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Welcome back, {user.name}!</h1>
-          <p className="text-gray-600">Track your progress and continue learning</p>
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="mb-10">
+          <h1 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-2">Welcome back, {user.name}! 👋</h1>
+          <p className="text-slate-500 text-lg">Track your progress and continue learning</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-blue-600">{stats?.totalTests || 0}</div>
-            <div className="text-gray-600 mt-2">Tests Taken</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-green-600">{stats?.avgScore || 0}%</div>
-            <div className="text-gray-600 mt-2">Average Score</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="text-3xl font-bold text-purple-600">{myTests.length}</div>
-            <div className="text-gray-600 mt-2">Created Tests</div>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg font-bold">
-                  {user.isPremium ? '✨ Premium' : 'Free'}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-4xl font-semibold text-indigo-600 mb-1">{stats?.totalTests || 0}</div>
+              <div className="text-slate-500 text-sm font-medium">Tests Taken</div>
+            </CardContent>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-4xl font-semibold text-green-600 mb-1">{stats?.avgScore || 0}%</div>
+              <div className="text-slate-500 text-sm font-medium">Average Score</div>
+            </CardContent>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="text-4xl font-semibold text-purple-600 mb-1">{myTests.length}</div>
+              <div className="text-slate-500 text-sm font-medium">Created Tests</div>
+            </CardContent>
+          </Card>
+          <Card className="rounded-2xl border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 pb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-semibold text-slate-900">
+                    {user.isPremium ? '✨ Premium' : '🎓 Free'}
+                  </div>
+                  <div className="text-slate-500 text-sm mt-1">Account Status</div>
                 </div>
-                <div className="text-gray-600 text-sm mt-1">Account Status</div>
+                {!user.isPremium && (
+                  <Button asChild size="sm" className="rounded-xl bg-indigo-600 hover:bg-indigo-700">
+                    <Link href="/pricing">Upgrade</Link>
+                  </Button>
+                )}
               </div>
-              {!user.isPremium && (
-                <Link
-                  href="/pricing"
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-lg text-sm font-semibold"
-                >
-                  Upgrade
-                </Link>
-              )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <Link
-            href="/tests"
-            className="bg-blue-600 text-white p-6 rounded-lg shadow-md hover:bg-blue-700 transition"
+            href="/questions"
+            className="group bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all"
           >
-            <div className="text-3xl mb-2">📝</div>
-            <h3 className="text-xl font-semibold mb-1">Browse Tests</h3>
-            <p className="text-blue-100">Explore available tests</p>
+            <div className="text-4xl mb-3">📚</div>
+            <h3 className="text-xl font-semibold mb-2">Question Bank</h3>
+            <p className="text-indigo-100 leading-relaxed">Browse and practice questions</p>
           </Link>
           <Link
-            href="/daily-quiz"
-            className="bg-green-600 text-white p-6 rounded-lg shadow-md hover:bg-green-700 transition"
+            href="/quiz"
+            className="group bg-gradient-to-br from-green-500 to-green-600 text-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all"
           >
-            <div className="text-3xl mb-2">🎯</div>
-            <h3 className="text-xl font-semibold mb-1">Daily Quiz</h3>
-            <p className="text-green-100">Practice daily questions</p>
+            <div className="text-4xl mb-3">🎯</div>
+            <h3 className="text-xl font-semibold mb-2">Take Quiz</h3>
+            <p className="text-green-100 leading-relaxed">Start a practice session</p>
           </Link>
           <Link
             href="/analytics"
-            className="bg-purple-600 text-white p-6 rounded-lg shadow-md hover:bg-purple-700 transition"
+            className="group bg-gradient-to-br from-purple-500 to-purple-600 text-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all"
           >
-            <div className="text-3xl mb-2">📊</div>
-            <h3 className="text-xl font-semibold mb-1">Analytics</h3>
-            <p className="text-purple-100">View detailed insights</p>
+            <div className="text-4xl mb-3">📊</div>
+            <h3 className="text-xl font-semibold mb-2">Analytics</h3>
+            <p className="text-purple-100 leading-relaxed">Track your progress</p>
           </Link>
         </div>
 
-        {/* Recent Tests */}
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Recent Test Results</h2>
-            <Link href="/analytics" className="text-blue-600 hover:underline">
-              View All →
-            </Link>
-          </div>
+        <Card className="mb-10 rounded-2xl border-slate-200 shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-2xl font-semibold text-slate-900">Recent Test Results</CardTitle>
+              <Link href="/analytics" className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                View All →
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
           {recentTests.length > 0 ? (
             <div className="space-y-3">
               {recentTests.map((test) => (
                 <div
                   key={test._id}
-                  className="flex justify-between items-center p-4 bg-gray-50 rounded-lg"
+                  className="flex justify-between items-center p-5 bg-slate-50 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors"
                 >
                   <div>
-                    <div className="font-semibold">Test #{test._id.slice(-6)}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="font-semibold text-slate-900">Test #{test._id.slice(-6)}</div>
+                    <div className="text-sm text-slate-500 mt-1">
                       {new Date(test.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-3xl font-semibold text-indigo-600">
                       {test.percentage.toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {test.correctAnswers}/{test.totalQuestions}
+                    <div className="text-sm text-slate-500 mt-1">
+                      {test.correctAnswers}/{test.totalQuestions} correct
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-600 text-center py-8">
-              No tests taken yet. Start practicing now!
-            </p>
+            <div className="text-center py-12">
+              <div className="text-5xl mb-4">📝</div>
+              <p className="text-slate-500 text-lg">No tests taken yet. Start practicing now!</p>
+            </div>
           )}
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* My Created Tests */}
         {myTests.length > 0 && (
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">My Created Tests</h2>
+          <Card className="rounded-2xl border-slate-200 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold text-slate-900">My Created Tests</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {myTests.map((test) => (
                 <Link
                   key={test._id}
                   href={`/tests/${test._id}`}
-                  className="p-4 border rounded-lg hover:border-blue-600 transition"
+                  className="p-5 border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-sm transition-all"
                 >
-                  <h3 className="font-semibold mb-2">{test.title}</h3>
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>{test.questions.length} questions</span>
-                    <span>{test.category}</span>
+                  <h3 className="font-semibold text-slate-900 mb-2">{test.title}</h3>
+                  <div className="flex justify-between text-sm text-slate-500">
+                    <span>📝 {test.questions.length} questions</span>
+                    <span>🏷️ {test.category}</span>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

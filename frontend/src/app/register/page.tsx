@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'email' | 'otp'>('email');
+  const [step, setStep] = useState<'details' | 'otp'>('details');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
@@ -25,7 +26,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await authAPI.sendEmailOTP(email);
+      const response = await authAPI.sendEmailOTP(email, name);
       if (response.data.success) {
         setStep('otp');
       }
@@ -42,7 +43,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await authAPI.verifyEmailOTP(email, otp);
+      const response = await authAPI.verifyEmailOTP(email, otp, name);
       if (response.data.success) {
         login(response.data.token);
         router.push('/dashboard');
@@ -54,33 +55,45 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleSignup = () => {
     // TODO: Implement Google OAuth
-    alert('Google login coming soon!');
+    alert('Google signup coming soon!');
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-semibold text-slate-900 mb-2">Welcome Back! 👋</h1>
-          <p className="text-slate-600">Sign in to continue your learning journey</p>
+          <h1 className="text-4xl font-semibold text-slate-900 mb-2">Get Started 🚀</h1>
+          <p className="text-slate-600">Create your account and start learning today</p>
         </div>
 
         <Card className="rounded-2xl shadow-lg border-slate-200">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-semibold text-center text-slate-900">
-              {step === 'email' ? 'Sign In' : 'Verify OTP'}
+              {step === 'details' ? 'Create Account' : 'Verify Email'}
             </CardTitle>
             <CardDescription className="text-center text-slate-500">
-              {step === 'email' ? 'Enter your email to receive OTP' : `Code sent to ${email}`}
+              {step === 'details' ? 'Enter your details to get started' : `Code sent to ${email}`}
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {step === 'email' ? (
+            {step === 'details' ? (
               <>
                 <form onSubmit={handleSendOTP} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-slate-700 font-medium">Full Name</Label>
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="h-12 rounded-xl text-base border-slate-300 focus:border-indigo-500"
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-slate-700 font-medium">Email Address</Label>
                     <Input
@@ -105,7 +118,7 @@ export default function LoginPage() {
                     className="w-full h-12 rounded-xl text-base bg-indigo-600 hover:bg-indigo-700"
                     disabled={loading}
                   >
-                    {loading ? 'Sending...' : 'Send OTP'}
+                    {loading ? 'Sending...' : 'Continue'}
                   </Button>
                 </form>
 
@@ -114,7 +127,7 @@ export default function LoginPage() {
                     <span className="w-full border-t border-slate-200" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-slate-500">Or continue with</span>
+                    <span className="bg-white px-2 text-slate-500">Or sign up with</span>
                   </div>
                 </div>
 
@@ -122,7 +135,7 @@ export default function LoginPage() {
                   type="button"
                   variant="outline"
                   className="w-full h-12 rounded-xl border-slate-300"
-                  onClick={handleGoogleLogin}
+                  onClick={handleGoogleSignup}
                 >
                   <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                     <path
@@ -146,9 +159,9 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="text-center text-sm text-slate-600">
-                  Don't have an account?{' '}
-                  <Link href="/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Sign up
+                  Already have an account?{' '}
+                  <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                    Sign in
                   </Link>
                 </div>
               </>
@@ -179,16 +192,16 @@ export default function LoginPage() {
                   className="w-full h-12 rounded-xl text-base bg-indigo-600 hover:bg-indigo-700"
                   disabled={loading}
                 >
-                  {loading ? 'Verifying...' : 'Verify & Sign In'}
+                  {loading ? 'Verifying...' : 'Verify & Create Account'}
                 </Button>
 
                 <Button
                   type="button"
                   variant="ghost"
                   className="w-full h-12 rounded-xl text-slate-600 hover:text-slate-900"
-                  onClick={() => setStep('email')}
+                  onClick={() => setStep('details')}
                 >
-                  ← Change Email
+                  ← Change Details
                 </Button>
               </form>
             )}

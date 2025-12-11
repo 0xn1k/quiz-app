@@ -3,37 +3,34 @@
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="container mx-auto px-4">
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-2xl font-bold text-blue-600">
-            QuizApp
+          <Link href="/" className="text-2xl font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
+            🎯 QuizApp
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/tests" className="text-gray-700 hover:text-blue-600">
-              Tests
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/questions" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+              Questions
             </Link>
-            <Link href="/daily-quiz" className="text-gray-700 hover:text-blue-600">
-              Daily Quiz
-            </Link>
-            <Link href="/pyqs" className="text-gray-700 hover:text-blue-600">
-              PYQs
+            <Link href="/quiz" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+              Take Quiz
             </Link>
             {user && (
               <>
-                <Link href="/dashboard" className="text-gray-700 hover:text-blue-600">
+                <Link href="/dashboard" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
                   Dashboard
                 </Link>
-                <Link href="/analytics" className="text-gray-700 hover:text-blue-600">
-                  Analytics
+                <Link href="/profile" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+                  Profile
                 </Link>
               </>
             )}
@@ -42,31 +39,20 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                {!user.isPremium && (
-                  <Link
-                    href="/pricing"
-                    className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-lg font-semibold"
-                  >
-                    Go Premium
-                  </Link>
-                )}
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-700">{user.name}</span>
-                  <button
-                    onClick={logout}
-                    className="text-gray-700 hover:text-red-600"
-                  >
-                    Logout
-                  </button>
-                </div>
+                <span className="text-slate-700 font-medium">{user.name}</span>
+                <Button variant="ghost" onClick={logout} className="rounded-xl text-slate-600 hover:text-slate-900">
+                  Logout
+                </Button>
               </>
             ) : (
-              <Link
-                href="/login"
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Login
-              </Link>
+              <div className="flex items-center gap-3">
+                <Button asChild variant="ghost" className="rounded-xl">
+                  <Link href="/login">Sign In</Link>
+                </Button>
+                <Button asChild className="rounded-xl bg-indigo-600 hover:bg-indigo-700">
+                  <Link href="/register">Get Started</Link>
+                </Button>
+              </div>
             )}
           </div>
 

@@ -18,9 +18,18 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
+  // Email OTP
+  sendEmailOTP: (email: string, name?: string) => api.post('/auth/email-otp', { email, name }),
+  verifyEmailOTP: (email: string, otp: string, name?: string) => api.post('/auth/verify-email-otp', { email, otp, name }),
+  
+  // Phone OTP
   sendOTP: (mobile: string) => api.post('/auth/otp', { mobile }),
   verifyOTP: (idToken: string, name: string) => api.post('/auth/verify-otp', { idToken, name }),
+  
+  // Google OAuth
   googleLogin: (idToken: string) => api.post('/auth/google', { idToken }),
+  
+  // Profile
   getMe: () => api.get('/auth/me'),
   updateProfile: (data: any) => api.put('/auth/profile', data),
 };
