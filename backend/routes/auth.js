@@ -28,7 +28,7 @@ router.post('/google', googleLogin);
 router.post('/email-otp', sendEmailOTP);
 router.post('/verify-email-otp', verifyEmailOTPController);
 
-// Protected routes
+// Protected routes -- by middlware to validate user token
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 

@@ -260,17 +260,56 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Update fields
+    // Update name if provided
     if (name) user.name = name;
-    if (email) user.email = email;
 
+    // Handle email update
+    if (email) {
+      const newEmail = email.toLowerCase();
+      
+      // Check if email is different from current
+      if (newEmail === user.email) {
+        return res.status(400).json({
+          success: false,
+          message: 'New email is the same as the current email'
+        });
+      }
+
+      // Check if email is already in use
+      const emailExists = await User.findOne({ email: newEmail });
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already in use by another account'
+        });
+      }
+
+      // Update email and require re-verification
+      user.email = newEmail;
+      user.isEmailVerified = false;
+      await user.save();
+
+      // Send OTP to new email
+      const otp = generateEmailOTP();
+      storeEmailOTP(newEmail, otp);
+      await sendOTPViaEmail(newEmail, otp, user.name);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Email updated. Please verify your new email. OTP sent to your new email address.',
+        user,
+        requiresVerification: true
+      });
+    }
+
+    // If only name was updated
     await user.save();
-
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
       user
     });
+
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({
@@ -294,6 +333,14 @@ const sendEmailOTP = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Email is required'
+      });
+    }
+
+   const checkUserWithEmailisVerified = await User.findOne({ email: email.toLowerCase() }); 
+    if (checkUserWithEmailisVerified && checkUserWithEmailisVerified.isEmailVerified) { 
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified. Please login.'
       });
     }
 
@@ -361,11 +408,16 @@ const verifyEmailOTPController = async (req, res) => {
     let user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      // Create new user
+      // Create new user with verified email
       user = await User.create({
         email: email.toLowerCase(),
-        name: name || 'User'
+        name: name || 'User',
+        isEmailVerified: true
       });
+    } else {
+      // Update existing user to verified
+      user.isEmailVerified = true;
+      await user.save();
     }
 
     // Generate JWT token
@@ -380,6 +432,7 @@ const verifyEmailOTPController = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
+        isEmailVerified: user.isEmailVerified,
         subscription: user.subscription,
         subscriptionExpiry: user.subscriptionExpiry
       }

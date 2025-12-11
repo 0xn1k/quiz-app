@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     sparse: true,
     unique: true
   },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
   password: {
     type: String,
     select: false // Don't return password in queries by default
