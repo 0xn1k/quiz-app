@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mobile, setMobile] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'details' | 'otp'>('details');
   const [loading, setLoading] = useState(false);
@@ -20,18 +22,21 @@ export default function RegisterPage() {
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleSendOTP = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await authAPI.sendEmailOTP(email, name);
-      if (response.data.success) {
-        setStep('otp');
+      const registerResponse = await authAPI.register({ name, email, password, mobile });
+      if (registerResponse.data.success) {
+        const otpResponse = await authAPI.sendEmailOTP(email, name);
+        if (otpResponse.data.success) {
+          setStep('otp');
+        }
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to send OTP');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -81,7 +86,7 @@ export default function RegisterPage() {
           <CardContent className="space-y-6">
             {step === 'details' ? (
               <>
-                <form onSubmit={handleSendOTP} className="space-y-4">
+                <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-slate-700 font-medium">Full Name</Label>
                     <Input
@@ -102,6 +107,33 @@ export default function RegisterPage() {
                       placeholder="your@email.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="h-12 rounded-xl text-base border-slate-300 focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-slate-700 font-medium">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="h-12 rounded-xl text-base border-slate-300 focus:border-indigo-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="mobile" className="text-slate-700 font-medium">Mobile Number</Label>
+                    <Input
+                      id="mobile"
+                      type="tel"
+                      placeholder="+1234567890"
+                      value={mobile}
+                      onChange={(e) => setMobile(e.target.value)}
                       required
                       className="h-12 rounded-xl text-base border-slate-300 focus:border-indigo-500"
                     />

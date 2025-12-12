@@ -18,6 +18,10 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
+  // Register & Login
+  register: (data: { name: string; email: string; password: string; mobile: string }) => api.post('/auth/register', data),
+  login: (email: string, password: string) => api.post('/auth/login', { email, password }),
+  
   // Email OTP
   sendEmailOTP: (email: string, name?: string) => api.post('/auth/email-otp', { email, name }),
   verifyEmailOTP: (email: string, otp: string, name?: string) => api.post('/auth/verify-email-otp', { email, otp, name }),
