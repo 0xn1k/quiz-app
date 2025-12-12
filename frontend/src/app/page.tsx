@@ -6,6 +6,7 @@ import { filterAPI, testAPI } from '@/lib/api';
 import { Test } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import PopularExams from '@/components/PopularExams';
 
 export default function Home() {
   const [stats, setStats] = useState<any>(null);
@@ -66,28 +67,7 @@ export default function Home() {
         </div>
       </section>
 
-      {stats && (
-        <section className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-              <div className="text-4xl font-semibold text-indigo-600 mb-2">{stats.totalQuestions}</div>
-              <div className="text-slate-500 font-medium">Total Questions</div>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-              <div className="text-4xl font-semibold text-green-600 mb-2">{stats.totalTests}</div>
-              <div className="text-slate-500 font-medium">Available Tests</div>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-              <div className="text-4xl font-semibold text-purple-600 mb-2">{stats.totalCategories}</div>
-              <div className="text-slate-500 font-medium">Categories</div>
-            </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-              <div className="text-4xl font-semibold text-orange-600 mb-2">{stats.totalPYQs}</div>
-              <div className="text-slate-500 font-medium">Past Year Questions</div>
-            </div>
-          </div>
-        </section>
-      )}
+      <PopularExams />
 
       <section className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="text-3xl md:text-4xl font-semibold text-center text-slate-900 mb-12">Why Choose Quiz App?</h2>
